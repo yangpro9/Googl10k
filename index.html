@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미국 주식 투자자를 위한 구글 10-K 심층 분석</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: 'Arial', sans-serif; /* 기본 폰트 */
+            line-height: 1.6; /* 줄 간격 */
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5; /* 전체 배경색 변경 */
+            color: #333; /* 기본 글자색 */
+            display: flex; /* 수직 중앙 정렬을 위해 추가 */
+            justify-content: center; /* 수평 중앙 정렬 */
+            align-items: center; /* 수직 중앙 정렬 */
+            min-height: 100vh; /* 최소 높이를 화면 전체로 */
+        }
+        .container {
+            width: 90%; /* 모바일 우선, 데스크탑에서는 최대 너비 설정 가능 */
+            max-width: 800px; /* 데스크탑 최대 너비 조정 */
+            margin: 20px auto; /* 상하 마진 추가 */
+            overflow: hidden;
+            padding: 25px;
+            background-color: #fff; /* 컨텐츠 배경색 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* 그림자 효과 강화 */
+            border-radius: 12px; /* 모서리 둥글게 */
+        }
+        /* 헤더 스타일 */
+        header {
+            background: linear-gradient(135deg, #4285F4, #34A853); /* 구글 색상 그라데이션 */
+            color: #fff;
+            padding: 25px 0;
+            text-align: center;
+            border-bottom: none; /* 하단 강조선 제거 */
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2em; /* 제목 크기 조정 */
+            font-weight: bold;
+        }
+        header p {
+            font-size: 1em; /* 부제목 크기 조정 */
+            opacity: 0.9;
+        }
+        /* 섹션 스타일 */
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #f8f9fa; /* 섹션 배경색 변경 */
+            border-left: 5px solid #4285F4; /* 섹션 왼쪽 강조선 */
+            border-radius: 8px; /* 섹션 모서리 둥글게 */
+            display: none; /* 페이지네이션을 위해 기본 숨김 */
+        }
+        .section.active {
+            display: block; /* 활성화된 페이지만 보이도록 */
+        }
+        .section h2 {
+            color: #0d47a1; /* 섹션 제목 색상 */
+            border-bottom: 2px solid #4285F4; /* 섹션 제목 하단선 */
+            padding-bottom: 10px;
+            font-size: 1.6em; /* 섹션 제목 크기 조정 */
+        }
+        .section h3 {
+            color: #1976D2; /* 섹션 소제목 색상 */
+            margin-top: 20px;
+            font-size: 1.3em; /* 섹션 소제목 크기 조정 */
+        }
+        /* 강조 박스 스타일 */
+        .highlight {
+            background-color: #E8F0FE; /* 밝은 구글 블루 */
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c6dafc;
+        }
+        .highlight strong {
+            color: #D93025; /* 구글 레드 */
+        }
+        /* 이모지/아이콘 스타일 */
+        .emoji {
+            font-size: 1.4em; /* 이모지 크기 조정 */
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        /* 리스트 스타일 */
+        ul {
+            list-style-type: none; /* 기본 리스트 스타일 제거 */
+            padding: 0;
+        }
+        ul li {
+            background-color: #ffffff; /* 리스트 아이템 배경색 */
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 4px solid #34A853; /* 구글 그린 */
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+        /* 경고/주의 박스 스타일 */
+        .warning {
+            background-color: #fff3cd; /* 부드러운 노란색 */
+            color: #856404; /* 어두운 노란색 텍스트 */
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left; /* 텍스트 왼쪽 정렬 */
+            font-weight: normal; /* bold 제거 */
+            margin-top: 20px;
+            border: 1px solid #ffeeba; /* 테두리 추가 */
+        }
+        .warning h3 {
+            color: #D93025; /* 경고 박스 내 제목 색상 */
+            margin-top: 0;
+            font-size: 1.2em;
+            text-align: center; /* 제목은 중앙 정렬 유지 */
+        }
+        /* 페이지네이션 버튼 스타일 */
+        .pagination-controls {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee; /* 구분선 */
+        }
+        .pagination-controls button {
+            background-color: #4285F4; /* 구글 블루 */
+            color: white;
+            border: none;
+            padding: 12px 25px; /* 패딩 조정 */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1em; /* 폰트 크기 */
+            margin: 0 10px; /* 버튼 간 간격 */
+            cursor: pointer;
+            border-radius: 25px; /* 둥근 버튼 */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* 부드러운 전환 효과 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .pagination-controls button:hover {
+            background-color: #3367D6; /* 호버 시 색상 변경 */
+            transform: translateY(-2px); /* 살짝 위로 이동 */
+        }
+        .pagination-controls button:disabled {
+            background-color: #cccccc; /* 비활성화 시 색상 */
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        /* 푸터 스타일 */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333; /* 푸터 배경색 */
+            color: #fff; /* 푸터 글자색 */
+            margin-top: 30px;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* 반응형 웹 디자인을 위한 미디어 쿼리 */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+                margin: 10px auto;
+            }
+            header h1 {
+                font-size: 1.6em;
+            }
+            header p {
+                font-size: 0.9em;
+            }
+            .section h2 {
+                font-size: 1.4em;
+            }
+            .section h3 {
+                font-size: 1.1em;
+            }
+            .emoji {
+                font-size: 1.2em;
+            }
+            .pagination-controls button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="emoji">📊</span> 미국 주식 투자자를 위한 구글 10-K 심층 분석 <span class="emoji">📈</span></h1>
+            <p>알파벳(구글 모회사)의 사업 보고서, 핵심만 짚어드립니다.</p>
+        </header>
+
+        <main>
+            <div class="highlight">
+                <p><span class="emoji">💡</span>미국 주식 투자에 입문하신 투자자 여러분, 안녕하십니까? 이 페이지는 글로벌 빅테크 기업, 알파벳(구글의 모회사)의 <strong>'10-K 보고서'</strong> 핵심 내용을 쉽게 이해하실 수 있도록 준비했습니다. 2024년 회계연도(2024년 12월 31일 종료) 기준의 이 보고서를 통해 알파벳의 사업 구조와 성장 가능성을 함께 살펴보시죠.</p>
+                <p><strong>10-K 보고서란 무엇일까요?</strong> <br>
+                미국 증권거래위원회(SEC)에 상장된 기업이 매년 의무적으로 제출하는 연차 사업 보고서입니다. 기업의 재무 상태, 사업 내용, 위험 요소 등 투자 결정에 필요한 상세 정보를 담고 있습니다.</p>
+            </div>
+
+            <div class="section active" id="section1">
+                <h2><span class="emoji">🏢</span>첫 번째 탐험: 알파벳(구글)의 사업 개요</h2>
+                <p>알파벳의 핵심 목표는 <strong>"전 세계 정보를 체계화하여 모두가 보편적으로 접근하고 유용하게 사용할 수 있도록 하는 것"</strong>입니다. 최근에는 <strong>인공지능(AI)</strong>을 최우선 과제로 삼고, 'AI 우선 기업(AI-first company)'으로의 전환을 가속화하고 있습니다.</p>
+
+                <h3><span class="emoji">📱</span> 구글 서비스 (Google Services)</h3>
+                <p>알파벳 매출의 가장 큰 부분을 차지하며, 우리가 일상적으로 사용하는 다양한 서비스를 포함합니다.</p>
+                <ul>
+                    <li><strong>구글 검색 (Google Search):</strong> 핵심적인 정보 검색 서비스로, AI 기반의 'AI 개요(AI Overviews)' 기능을 통해 더욱 정교한 답변을 제공합니다.</li>
+                    <li><strong>유튜브 (YouTube):</strong> 세계 최대 동영상 플랫폼으로, 엔터테인먼트, 정보 습득, 교육 등 다양한 목적의 콘텐츠를 제공하며 광고 및 구독 수익을 창출합니다.</li>
+                    <li><strong>안드로이드 (Android) & 크롬 (Chrome):</strong> 모바일 운영체제와 웹 브라우저 시장에서 높은 점유율을 차지하며, 구글 생태계의 중요한 축을 담당합니다.</li>
+                    <li><strong>픽셀 (Pixel) 등 하드웨어:</strong> 자체 설계한 스마트폰, 스마트워치 등의 하드웨어 제품군으로, AI 기술을 긴밀하게 통합하여 사용자 경험을 강화하고 있습니다.</li>
+                    <li>기타 서비스: 지메일(Gmail), 구글 드라이브(Google Drive), 구글 맵스(Google Maps), 구글 포토(Google Photos) 등 다수의 필수 서비스를 제공합니다.</li>
+                </ul>
+
+                <h3><span class="emoji">☁️</span> 구글 클라우드 (Google Cloud)</h3>
+                <p>기업 고객을 대상으로 인프라, 플랫폼, 소프트웨어(SaaS) 등 다양한 클라우드 컴퓨팅 서비스를 제공하며, 빠르게 성장하고 있는 사업 부문입니다.</p>
+                <ul>
+                    <li><strong>AI 최적화 인프라:</strong> 기업들이 자체 AI 모델을 개발하고 운영할 수 있도록 고성능 컴퓨팅 자원을 제공합니다.</li>
+                    <li><strong>개발자 플랫폼 (Vertex AI):</strong> 알파벳의 최신 AI 모델(예: 제미나이)을 활용하여 기업들이 맞춤형 AI 솔루션을 구축할 수 있도록 지원합니다.</li>
+                    <li><strong>사이버 보안 & 데이터 분석:</strong> AI 기반 보안 솔루션과 빅데이터 분석 도구를 통해 기업의 데이터 활용 및 보호 역량을 강화합니다.</li>
+                    <li><strong>업무용 AI 솔루션 (Gemini for Google Workspace):</strong> 구글 워크스페이스(문서, 스프레드시트, 프레젠테이션 등)에 AI 기능을 통합하여 업무 생산성 향상을 지원합니다.</li>
+                </ul>
+
+                <h3><span class="emoji">🚀</span> 아더 베츠 (Other Bets)</h3>
+                <p>'기타 투자'로 번역되며, 장기적인 관점에서 미래 성장 동력을 발굴하기 위한 혁신 기술 및 신사업 분야에 투자하는 부문입니다. 대표적으로 자율주행 기술을 개발하는 <strong>웨이모(Waymo)</strong> 등이 있습니다.</p>
+
+                <h3><span class="emoji">🤖</span> 알파벳의 핵심 동력, 인공지능 (AI)</h3>
+                <p>알파벳은 자체 개발한 고성능 AI 모델인 <strong>제미나이(Gemini)</strong>를 중심으로 AI 기술 리더십을 강화하고 있습니다. 제미나이는 텍스트, 코드, 이미지, 음성, 비디오 등 다양한 유형의 정보를 동시에 이해하고 처리하는 '멀티모달(Multimodal)' 역량을 갖추고 있으며, 구글의 핵심 서비스 전반에 적용되어 서비스 고도화를 이끌고 있습니다. 알파벳은 가장 발전되고, 안전하며, 책임감 있는 AI 개발을 목표로 하고 있습니다.</p>
+            </div>
+
+            <div class="section" id="section2">
+                <h2><span class="emoji">💵</span>두 번째 탐험: 알파벳의 수익 창출 방식</h2>
+                <p>알파벳의 주된 수익원은 <strong>온라인 광고</strong>로, 2024년 총수익의 상당 부분(75% 이상)을 차지했습니다.</p>
+                <ul>
+                    <li><strong>퍼포먼스 광고 (Performance Advertising):</strong> 광고주의 특정 목표(예: 웹사이트 클릭, 구매 전환, 앱 설치) 달성을 목적으로 하는 광고입니다.</li>
+                    <li><strong>브랜드 광고 (Brand Advertising):</strong> 기업 및 제품의 인지도를 높이고 브랜드 이미지를 구축하기 위한 광고입니다.</li>
+                </ul>
+                <p>AI 기술은 광고 타겟팅의 정확도를 높이고 사용자에게 더욱 관련성 높은 광고를 노출함으로써 광고 효율성을 극대화하는 데 기여합니다.</p>
+                <p>광고 외 주요 수익원은 다음과 같습니다:</p>
+                <ul>
+                    <li><strong>구글 클라우드 사용료 및 구독료:</strong> 기업 고객의 클라우드 서비스 이용에 따른 수익입니다.</li>
+                    <li><strong>소비자 구독 서비스:</strong> 유튜브 프리미엄, 유튜브 뮤직, 유튜브 TV, 구글 원(클라우드 스토리지) 등 개인 사용자를 대상으로 하는 유료 구독 서비스 수익입니다.</li>
+                    <li><strong>플랫폼 수수료 (구글 플레이):</strong> 구글 플레이 스토어를 통해 발생하는 앱 및 디지털 콘텐츠 판매 수수료입니다.</li>
+                    <li><strong>하드웨어 판매 (픽셀 등):</strong> 픽셀 스마트폰, 스마트워치 등 자체 하드웨어 제품 판매 수익입니다.</li>
+                </ul>
+            </div>
+
+            <div class="section" id="section3">
+                <h2><span class="emoji">📉</span>세 번째 탐험: 알파벳이 직면한 주요 위험 요인</h2>
+                <p>글로벌 기업 알파벳 역시 다양한 경영상의 위험과 도전에 직면해 있습니다. 10-K 보고서는 이러한 잠재적 위험 요인들을 상세히 명시하고 있습니다.</p>
+                <ul>
+                    <li><strong>치열한 시장 경쟁:</strong> 검색, 광고, 클라우드 컴퓨팅, AI, 하드웨어 등 모든 사업 분야에서 글로벌 빅테크 기업(예: 아마존, 마이크로소프트, 애플, 메타) 및 신흥 기업들과 치열하게 경쟁하고 있습니다.</li>
+                    <li><strong>광고 수익 편중 위험:</strong> 전체 매출에서 광고가 차지하는 비중이 높아, 글로벌 경기 침체나 광고 시장 변화에 따라 실적이 민감하게 반응할 수 있습니다. 광고 차단 기술의 확산 또한 잠재적 위협 요인입니다.</li>
+                    <li><strong>AI 기술 개발 및 상용화의 불확실성:</strong> AI 기술은 막대한 투자와 고도의 기술력을 요구하며, 경쟁 환경이 급변하고 있습니다. AI 기술의 윤리적 문제, 사회적 영향, 규제 불확실성 등도 고려해야 할 위험입니다.</li>
+                    <li><strong>각국 정부의 규제 강화 및 법적 분쟁:</strong> 시장 지배력, 개인정보보호, 공정 경쟁 등과 관련하여 전 세계적으로 규제가 강화되는 추세이며, 반독점 소송 등 법적 분쟁에 직면할 가능성이 상존합니다. (예: 미국 법무부의 반독점 소송 결과)</li>
+                    <li><strong>데이터 프라이버시 및 보안 문제:</strong> 방대한 사용자 데이터를 처리함에 따라 개인정보 유출 및 사이버 공격의 위험에 노출되어 있으며, 관련 법규 위반 시 막대한 금전적 손실과 기업 이미지 손상을 초래할 수 있습니다.</li>
+                    <li><strong>유해 콘텐츠 관리의 어려움:</strong> 유튜브, 검색 등 플랫폼 내 유해 콘텐츠(가짜 뉴스, 혐오 발언 등)를 완벽하게 차단하고 관리하는 데는 기술적, 현실적 한계가 존재하며, 이는 플랫폼 신뢰도에 부정적인 영향을 미칠 수 있습니다.</li>
+                </ul>
+            </div>
+
+            <div class="section" id="section4">
+                <h2><span class="emoji">📊</span>네 번째 탐험: 알파벳의 주식 및 재무 정보 개요</h2>
+                <p>10-K 보고서는 알파벳의 상세한 재무제표를 포함하고 있습니다. 알파벳의 주식은 미국 <strong>나스닥(Nasdaq)</strong> 시장에서 거래되며, 보통주(Class A)는 티커 <strong>'GOOGL'</strong>, 의결권 없는 주식(Class C)은 티커 <strong>'GOOG'</strong>로 구분됩니다.</p>
+                <p>보고서를 통해 알파벳이 지속적으로 높은 매출과 이익을 창출하는 우량 기업임을 확인할 수 있습니다. 최근 알파벳은 주주가치 제고를 위해 자사주 매입 프로그램을 운영하고 있으며, 현금 배당 지급도 시작했습니다.</p>
+            </div>
+
+            <div class="section" id="section5">
+                <h2><span class="emoji">🔭</span>다섯 번째 탐험: 알파벳의 미래 성장 전략</h2>
+                <p>알파벳은 다음과 같은 핵심 전략을 통해 지속적인 성장을 추구할 것으로 예상됩니다.</p>
+                <ul>
+                    <li><strong>AI 기술 리더십 강화:</strong> 모든 제품과 서비스에 AI를 심층적으로 통합하여 사용자 경험을 혁신하고 새로운 가치를 창출하는 데 주력할 것입니다.</li>
+                    <li><strong>'문샷(Moonshots)' 프로젝트를 통한 장기 성장 동력 확보:</strong> 자율주행, 생명과학, 양자컴퓨팅 등 미래 사회 변화를 이끌 혁신 기술에 대한 장기적인 투자를 지속할 것입니다.</li>
+                    <li><strong>글로벌 규제 환경 변화에 대한 능동적 대응:</strong> 각국 정부의 규제 동향을 면밀히 주시하고, 법규 준수 및 사회적 책임을 다하는 경영 활동을 강화할 것입니다.</li>
+                    <li><strong>지속 가능한 성장 추구:</strong> 환경(Environment), 사회(Social), 지배구조(Governance)를 중시하는 ESG 경영을 통해 장기적인 기업 가치 향상을 도모할 것입니다.</li>
+                </ul>
+            </div>
+
+            <div class="pagination-controls">
+                <button id="prevBtn" onclick="changePage(-1)" disabled>이전 탐험</button>
+                <button id="nextBtn" onclick="changePage(1)">다음 탐험</button>
+            </div>
+
+            <div class="warning">
+                <h3><span class="emoji">💡</span> 투자자 여러분께 드리는 조언</h3>
+                <p>본 자료는 알파벳의 10-K 보고서 내용을 요약·정리한 교육용 참고 자료이며, 특정 종목에 대한 투자 추천이나 권유를 목적으로 하지 않습니다. 실제 투자 결정은 다음 사항들을 충분히 고려하시어 신중하게 내리시기 바랍니다.</p>
+                <ul>
+                    <li><strong>10-K 보고서 원문 및 추가 정보 확인:</strong> 본 자료는 요약 정보이므로, 미국 증권거래위원회(SEC) EDGAR 시스템 등을 통해 10-K 보고서 원문 전체와 기타 공시자료, 최신 뉴스, 전문가 분석 등을 종합적으로 검토하십시오.</li>
+                    <li><strong>전문가 상담:</strong> 투자 경험이 부족하거나 보다 심층적인 분석이 필요한 경우, 공인된 금융 투자 전문가와 상담하시는 것이 좋습니다.</li>
+                    <li><strong>투자 위험 인지:</strong> 모든 투자에는 원금 손실의 위험이 따릅니다. 과거의 성과가 미래의 수익을 보장하지 않으며, 투자 결정에 따른 책임은 투자자 본인에게 있습니다.</li>
+                </ul>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2025 미국 주식 투자자를 위한 구글 10-K 심층 분석 - 교육용 자료입니다.</p>
+        </footer>
+    </div> <script>
+        // 페이지네이션 로직을 위한 JavaScript
+        let currentPageIndex = 0; // 현재 활성화된 섹션의 인덱스 (0부터 시작)
+        const sections = document.querySelectorAll('.section'); // 모든 'section' 요소를 가져옴
+        const prevButton = document.getElementById('prevBtn'); // '이전' 버튼
+        const nextButton = document.getElementById('nextBtn'); // '다음' 버튼
+        const totalPages = sections.length; // 전체 섹션(페이지) 수
+
+        // 특정 인덱스의 페이지만 보여주는 함수
+        function showPage(index) {
+            sections.forEach((section, i) => {
+                section.classList.toggle('active', i === index); // 현재 인덱스와 같으면 'active' 클래스 추가, 아니면 제거
+            });
+            updateButtonStates(); // 버튼 상태 업데이트
+            window.scrollTo(0, 0); // 페이지 변경 시 맨 위로 스크롤
+        }
+
+        // 버튼의 활성화/비활성화 상태를 업데이트하는 함수
+        function updateButtonStates() {
+            prevButton.disabled = (currentPageIndex === 0); // 첫 페이지면 '이전' 버튼 비활성화
+            nextButton.disabled = (currentPageIndex === totalPages - 1); // 마지막 페이지면 '다음' 버튼 비활성화
+        }
+
+        // 페이지를 변경하는 함수 (n은 변경할 페이지 수, 예: 1은 다음 페이지, -1은 이전 페이지)
+        function changePage(n) {
+            const newPageIndex = currentPageIndex + n;
+            if (newPageIndex >= 0 && newPageIndex < totalPages) { // 유효한 페이지 인덱스인지 확인
+                currentPageIndex = newPageIndex;
+                showPage(currentPageIndex);
+            }
+        }
+
+        // 초기 페이지 로드 시 첫 번째 섹션을 보여주고 버튼 상태 업데이트
+        showPage(currentPageIndex);
+    </script>
+</body>
+</html>
